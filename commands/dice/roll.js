@@ -1,5 +1,18 @@
 const { SlashCommandBuilder } = require('discord.js');
 
+const numberEmojis = {
+	'0': '0️⃣',
+	'1': '1️⃣',
+	'2': '2️⃣',
+	'3': '3️⃣',
+	'4': '4️⃣',
+	'5': '5️⃣',
+	'6': '6️⃣',
+	'7': '7️⃣',
+	'8': '8️⃣',
+	'9': '9️⃣'
+};
+
 module.exports = {
 	data: new SlashCommandBuilder()
 		.setName('roll')
@@ -18,8 +31,15 @@ module.exports = {
 				{ name: 'D20', value: '20' }
 			)),
 	async execute(interaction) {
-        const dieToRoll = interaction.options.getString('dice');
+    const dieToRoll = interaction.options.getString('dice');
 		const roll = Math.floor(Math.random() * dieToRoll) + 1;
-        await interaction.reply(`You rolled a ${roll}!`);
+
+		const rollEmoji = roll
+			.toString()
+			.split('')
+			.map(digit => numberEmojis[digit])
+			.join('');
+
+    await interaction.reply(rollEmoji);
 	},
 };
