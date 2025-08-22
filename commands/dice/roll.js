@@ -63,7 +63,8 @@ module.exports = {
     const dots = (step) => '.'.repeat((step % 3) + 1);
     const rollingHeader = (step) => `🎲 Rolling ${count} D${dieSides}${dots(step)}`;
 
-    const msg = await interaction.reply({ content: rollingHeader(0), fetchReply: true });
+    await interaction.reply({ content: rollingHeader(0) });
+    const msg = await interaction.fetchReply();
 
     const results = [];
     const parts = [];
