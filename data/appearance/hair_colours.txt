@@ -18,6 +18,7 @@ ginger
 red
 mahogany
 burgundy
+ebony
 grey
 silver
 white
