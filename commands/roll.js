@@ -21,30 +21,46 @@ const buildNumberThumbUrl = (n) => {
   return `https://dummyimage.com/256x256/222/ffffff.png&text=${txt}`;
 };
 
-const buildColumns = (lines, totalDice, cols = 3, final = false) => {
-  if (totalDice === 0) return [];
+const nbSpace = '\u00A0';
+const rightPad = (text, width) => {
+  const len = text.length;
+  const pad = Math.max(0, width - len);
+  return nbSpace.repeat(pad) + text;
+};
 
+const buildColumns = (lines, totalDice, dieSides, cols = 3, final = false) => {
   const columns = Math.max(1, Math.min(cols, 3));
   const rowsPerCol = Math.ceil(totalDice / columns);
-  const fields = [];
 
-  const fullGrid = Array.from({ length: totalDice }, (_, i) => {
-    return i < lines.length ? lines[i] : (final ? '\u200B' : '—');
+  const maxWidth = dieSides.toString().length;
+
+  const gridSize = rowsPerCol * columns;
+  const fullGrid = Array.from({ length: gridSize }, (_, i) => {
+    if (i < totalDice) {
+      if (i < lines.length) {
+        return rightPad(lines[i], maxWidth);
+      }
+      return final ? '' : rightPad('—', maxWidth);
+    }
+    return '';
   });
 
+  const fields = [];
   for (let c = 0; c < columns; c++) {
     const start = c * rowsPerCol;
     const end = start + rowsPerCol;
     const chunk = fullGrid.slice(start, end);
 
-    if (chunk.length) {
-      fields.push({
-        name: '\u200B',
-        value: chunk.join('\n'),
-        inline: true
-      });
-    }
+    const safeLines = chunk.map(line => (line === '' ? nbSpace : line));
+    const block = '```' + '\n' + safeLines.join('\n') + '\n' + '```';
+
+    fields.push({
+      name: '\u200B',
+      value: block,
+      inline: true
+    });
   }
+
   return fields;
 };
 
@@ -56,7 +72,7 @@ const buildRollingEmbed = ({ dieSides, count, parts, requestedBy }) => {
     .setFooter({ text: `Requested by ${requestedBy}` })
     .setTimestamp();
 
-  const fields = buildColumns(parts, count, 3, false);
+  const fields = buildColumns(parts, count, dieSides, 3, false);
   embed.addFields(fields);
 
   return embed;
@@ -70,13 +86,13 @@ const buildFinalEmbed = ({ dieSides, count, parts, total, requestedBy }) => {
     .setFooter({ text: `Requested by ${requestedBy}` })
     .setTimestamp();
 
-  const fields = buildColumns(parts, count, 3, true);
+  const fields = buildColumns(parts, count, dieSides, 3, true);
   embed.addFields(fields);
 
   if (count > 1) {
     embed.addFields({
       name: 'Total',
-      value: `**${total.toString()}**`,
+      value: '```fix\n' + `   ${total}\n` + '```',
       inline: false
     });
     embed.setThumbnail(buildNumberThumbUrl(total));
@@ -110,9 +126,9 @@ module.exports = {
     .addIntegerOption(option =>
       option
         .setName('count')
-        .setDescription('Number of dice (1-10)')
+        .setDescription('Number of dice (1-20)')
         .setMinValue(1)
-        .setMaxValue(10)
+        .setMaxValue(20)
         .setRequired(true)
     ),
   async execute(interaction) {
