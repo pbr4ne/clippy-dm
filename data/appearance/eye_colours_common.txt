@@ -3,4 +3,3 @@ hazel
 green
 blue
 grey
-amber

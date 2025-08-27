@@ -21,3 +21,4 @@ wide
 curious
 haunted
 tired
+pale
