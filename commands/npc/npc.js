@@ -62,10 +62,6 @@ module.exports = {
     const trait = pickTrait();
     const beard = gender === 'man' ? pickBeardTrait() : null;
 
-    const hairFieldValue = gender === 'man'
-      ? (beard ? `• ${hairText}\n• ${beard}` : `• ${hairText}`)
-      : (beard ? `${hairText}\n${beard}` : hairText);
-
     const genderEmoji =
       gender === 'man' ? '♂️' :
       gender === 'woman' ? '♀️' :
@@ -84,7 +80,8 @@ module.exports = {
         { name: 'Gender', value: `${genderEmoji} ${gender}`, inline: true },
         { name: 'Age', value: `${age}`, inline: true },
         { name: 'Eyes', value: eyes.text, inline: true },
-        { name: 'Hair', value: hairFieldValue, inline: true },
+        { name: 'Hair', value: hairText, inline: true },
+        ...(beard ? [{ name: 'Beard', value: beard, inline: true }] : []),
         { name: 'Trait', value: trait, inline: true }
       )
       .setFooter({ text: `Requested by ${interaction.user.username}` })
