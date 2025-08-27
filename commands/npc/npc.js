@@ -77,7 +77,7 @@ module.exports = {
       0xf4900c;
 
     const embed = new EmbedBuilder()
-      .setTitle('NPC Generated')
+      .setTitle('Generated NPC')
       .setColor(color)
       .addFields(
         { name: 'Name', value: `${first} ${last}`, inline: true },

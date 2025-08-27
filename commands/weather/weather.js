@@ -53,7 +53,7 @@ const randInt = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('weather')
-    .setDescription('Generate weather')
+    .setDescription('Generate weather.')
     .addStringOption(o =>
       o.setName('season')
         .setDescription('Season')
