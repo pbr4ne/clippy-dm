@@ -1,7 +1,7 @@
 const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
 const path = require('path');
 const config = require(path.join(process.cwd(), 'config.json'));
-const { pickFirstName, pickSurname, pickWeightedGender } = require(path.join(process.cwd(), 'lib', 'nameUtil.js'));
+const { pickFirstName, pickSurname, pickWeightedGender } = require(path.join(process.cwd(), 'lib', 'name', 'nameUtil.js'));
 
 module.exports = {
   data: new SlashCommandBuilder()
