@@ -23,7 +23,7 @@ const formatTotal = (total) => {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('roll')
-    .setDescription('Rolls dice!')
+    .setDescription('Roll dice')
     .addStringOption(option =>
       option
         .setName('dice')
