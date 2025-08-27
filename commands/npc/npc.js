@@ -1,153 +1,81 @@
+const { SlashCommandBuilder, EmbedBuilder } = require('discord.js');
+const path = require('path');
+const config = require(path.join(process.cwd(), 'config.json'));
 const {
-  SlashCommandBuilder,
-  ActionRowBuilder,
-  StringSelectMenuBuilder,
-  ButtonBuilder,
-  ButtonStyle,
-  ComponentType
-} = require('discord.js');
+  pickFirstName,
+  pickSurname,
+  pickWeightedGender
+} = require(path.join(process.cwd(), 'lib', 'nameUtil.js'));
+const { generateHair, formatHair } = require(path.join(process.cwd(), 'lib', 'hairUtil.js'));
+const { generateEyes } = require(path.join(process.cwd(), 'lib', 'eyeUtil.js'));
 
-const RACES = ['Human', 'Elf', 'Dwarf', 'Halfling', 'Orc', 'Tiefling'];
-const GENDERS = ['Female', 'Male', 'Nonbinary'];
+function randInt(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
 
-const pick = (arr) => arr[Math.floor(Math.random() * arr.length)];
-function generateName(race, gender) {
-  const firsts = ['Rowan', 'Eliza', 'Gideon', 'Sage', 'Avery', 'Mira', 'Theo', 'Nyx'];
-  const lasts = ['Blackwell', 'Thorne', 'Harrow', 'Fairwind', 'Locke', 'Moors', 'Ashvale'];
-  return `${pick(firsts)} ${pick(lasts)}`;
+function pickWeightedAge() {
+  const bands = [
+    { min: 20, max: 24, weight: 6 },
+    { min: 25, max: 34, weight: 32 },
+    { min: 35, max: 44, weight: 27 },
+    { min: 45, max: 54, weight: 18 },
+    { min: 55, max: 64, weight: 11 },
+    { min: 65, max: 80, weight: 6 }
+  ];
+  const total = bands.reduce((s, b) => s + b.weight, 0);
+  let r = Math.random() * total;
+  for (const b of bands) {
+    if ((r -= b.weight) <= 0) return randInt(b.min, b.max);
+  }
+  return randInt(25, 40);
 }
 
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('npc')
-    .setDescription('Generate an NPC name'),
+    .setDescription('Generate a random NPC'),
   async execute(interaction) {
-    const nonce = interaction.id;
-    const ids = {
-      race: `npc_race_${nonce}`,
-      gender: `npc_gender_${nonce}`,
-      gen: `npc_gen_${nonce}`,
-      doneOrCancel: `npc_done_cancel_${nonce}`
-    };
+    const gender = pickWeightedGender();
+    const first = pickFirstName(gender);
+    const last = pickSurname();
+    const age = pickWeightedAge();
 
-    const state = { race: null, gender: null, name: null };
+    const hair = generateHair(age);
+    const hairText = formatHair(hair);
 
-    const content = () => [
-      '**Create NPC**',
-      `• Race: ${state.race ?? '*—*'}`,
-      `• Gender: ${state.gender ?? '*—*'}`,
-      `• Name: ${state.name ? `**${state.name}**` : '*—*'}`
-    ].join('\n');
+    const eyes = generateEyes();
 
-    const finalizeText = () =>
-      `✅ **NPC Created**\n• Race: ${state.race}\n• Gender: ${state.gender}\n• Name: **${state.name}**`;
+    const genderEmoji =
+      gender === 'man' ? '♂️' :
+      gender === 'woman' ? '♀️' :
+      (config.emojis?.nonbinary_sign || '⚧️');
 
-    const buildRows = () => {
-      const raceMenu = new StringSelectMenuBuilder()
-        .setCustomId(ids.race)
-        .setPlaceholder('Choose race')
-        .addOptions(RACES.map(r => ({
-          label: r,
-          value: r,
-          default: state.race === r
-        })));
+    const color =
+      gender === 'man' ? 0x226699 :
+      gender === 'woman' ? 0xea596e :
+      0xf4900c;
 
-      const genderMenu = new StringSelectMenuBuilder()
-        .setCustomId(ids.gender)
-        .setPlaceholder('Choose gender')
-        .addOptions(GENDERS.map(g => ({
-          label: g,
-          value: g,
-          default: state.gender === g
-        })));
+    const embed = new EmbedBuilder()
+      .setTitle('NPC Generated')
+      .setColor(color)
+      .addFields(
+        { name: 'Name', value: `${first} ${last}`, inline: true },
+        { name: 'Gender', value: `${genderEmoji} ${gender}`, inline: true },
+        {
+          name: "\t",
+          value: "\t"
+        },
+        { name: 'Age', value: `${age}`, inline: true },
+        { name: 'Eyes', value: eyes.text, inline: true },
+        {
+          name: "\t",
+          value: "\t"
+        },
+        { name: 'Hair', value: hairText, inline: false }
+      )
+      .setFooter({ text: `Requested by ${interaction.user.username}` })
+      .setTimestamp();
 
-      const canGenerate = Boolean(state.race && state.gender);
-
-      const actions = new ActionRowBuilder().addComponents(
-        new ButtonBuilder()
-          .setCustomId(ids.gen)
-          .setLabel('Generate Name')
-          .setStyle(ButtonStyle.Primary)
-          .setDisabled(!canGenerate),
-        new ButtonBuilder()
-          .setCustomId(ids.doneOrCancel)
-          .setLabel(state.name ? 'Done' : 'Cancel')
-          .setStyle(state.name ? ButtonStyle.Success : ButtonStyle.Danger)
-      );
-
-      return [
-        new ActionRowBuilder().addComponents(raceMenu),
-        new ActionRowBuilder().addComponents(genderMenu),
-        actions
-      ];
-    };
-
-    const msg = await interaction.reply({
-      content: content(),
-      components: buildRows()
-    });
-
-    const filter = (i) =>
-      i.user.id === interaction.user.id &&
-      [ids.race, ids.gender, ids.gen, ids.doneOrCancel].includes(i.customId);
-
-    const collector = msg.createMessageComponentCollector({
-      componentType: ComponentType.MessageComponent,
-      filter,
-      time: 120_000
-    });
-
-    collector.on('collect', async (i) => {
-      if (i.customId === ids.race) {
-        state.race = i.values[0];
-        state.name = null;
-        return i.update({ content: content(), components: buildRows() });
-      }
-
-      if (i.customId === ids.gender) {
-        state.gender = i.values[0];
-        state.name = null;
-        return i.update({ content: content(), components: buildRows() });
-      }
-
-      if (i.customId === ids.gen) {
-        state.name = generateName(state.race, state.gender);
-        return i.update({ content: content(), components: buildRows() });
-      }
-
-      if (i.customId === ids.doneOrCancel) {
-        if (state.name) {
-          await i.update({
-            content: finalizeText(),
-            components: []
-          });
-          return collector.stop('done');
-        } else {
-          await i.update({
-            content: '❌ NPC creation canceled.',
-            components: []
-          });
-          return collector.stop('cancelled');
-        }
-      }
-    });
-
-    collector.on('end', async (_c, reason) => {
-      if (reason === 'time') {
-        try {
-          if (state.name && state.race && state.gender) {
-            await msg.edit({
-              content: finalizeText(),
-              components: []
-            });
-          } else {
-            await msg.edit({
-              content: '⌛ Timed out. Start `/npc` again.',
-              components: []
-            });
-          }
-        } catch (_) {}
-      }
-    });
-  }
+    await interaction.reply({ embeds: [embed] });
+  },
 };

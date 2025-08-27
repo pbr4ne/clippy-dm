@@ -1,0 +1,6 @@
+shaved
+short
+chin-length
+shoulder-length
+long
+waist-length
