@@ -21,28 +21,36 @@ const buildNumberThumbUrl = (n) => {
   return `https://dummyimage.com/256x256/222/ffffff.png&text=${txt}`;
 };
 
-const nbSpace = '\u00A0';
-const rightPad = (text, width) => {
-  const len = text.length;
-  const pad = Math.max(0, width - len);
-  return nbSpace.repeat(pad) + text;
+const NBSP = '\u00A0';
+
+const rightAlignDisplay = (display, numericStr, maxWidth) => {
+  const pad = Math.max(0, maxWidth - numericStr.length);
+  return NBSP.repeat(pad) + display;
 };
 
-const buildColumns = (lines, totalDice, dieSides, cols = 3, final = false) => {
+const buildColumns = ({ displays, rolls, totalDice, dieSides, cols = 3, final = false }) => {
   const columns = Math.max(1, Math.min(cols, 3));
   const rowsPerCol = Math.ceil(totalDice / columns);
-
   const maxWidth = dieSides.toString().length;
 
   const gridSize = rowsPerCol * columns;
   const fullGrid = Array.from({ length: gridSize }, (_, i) => {
-    if (i < totalDice) {
-      if (i < lines.length) {
-        return rightPad(lines[i], maxWidth);
-      }
-      return final ? '' : rightPad('—', maxWidth);
+    if (i >= totalDice) return '';
+    if (i >= displays.length) {
+      const placeholder = rightAlignDisplay('—', '—', maxWidth);
+      return '  ' + placeholder;
     }
-    return '';
+
+    const val = rolls[i];
+    const display = displays[i];
+    const numericStr = String(val);
+
+    const isCrit = dieSides === 20 && val === 20;
+    const isFail = dieSides === 20 && val === 1;
+
+    const prefix = isCrit ? '+ ' : isFail ? '- ' : '  ';
+    const aligned = rightAlignDisplay(display, numericStr, maxWidth);
+    return prefix + aligned;
   });
 
   const fields = [];
@@ -51,8 +59,8 @@ const buildColumns = (lines, totalDice, dieSides, cols = 3, final = false) => {
     const end = start + rowsPerCol;
     const chunk = fullGrid.slice(start, end);
 
-    const safeLines = chunk.map(line => (line === '' ? nbSpace : line));
-    const block = '```' + '\n' + safeLines.join('\n') + '\n' + '```';
+    const safeLines = chunk.map(line => (line === '' ? NBSP : line));
+    const block = '```diff\n' + safeLines.join('\n') + '\n```';
 
     fields.push({
       name: '\u200B',
@@ -60,11 +68,10 @@ const buildColumns = (lines, totalDice, dieSides, cols = 3, final = false) => {
       inline: true
     });
   }
-
   return fields;
 };
 
-const buildRollingEmbed = ({ dieSides, count, parts, requestedBy }) => {
+const buildRollingEmbed = ({ dieSides, count, displays, rolls, requestedBy }) => {
   const title = `${animatedDice} Rolling ${count}d${dieSides}`;
   const embed = new EmbedBuilder()
     .setTitle(title)
@@ -72,13 +79,13 @@ const buildRollingEmbed = ({ dieSides, count, parts, requestedBy }) => {
     .setFooter({ text: `Requested by ${requestedBy}` })
     .setTimestamp();
 
-  const fields = buildColumns(parts, count, dieSides, 3, false);
+  const fields = buildColumns({ displays, rolls, totalDice: count, dieSides, cols: 3, final: false });
   embed.addFields(fields);
 
   return embed;
 };
 
-const buildFinalEmbed = ({ dieSides, count, parts, total, requestedBy }) => {
+const buildFinalEmbed = ({ dieSides, count, displays, rolls, total, requestedBy }) => {
   const title = `Rolled ${count}d${dieSides}`;
   const embed = new EmbedBuilder()
     .setTitle(title)
@@ -86,19 +93,19 @@ const buildFinalEmbed = ({ dieSides, count, parts, total, requestedBy }) => {
     .setFooter({ text: `Requested by ${requestedBy}` })
     .setTimestamp();
 
-  const fields = buildColumns(parts, count, dieSides, 3, true);
+  const fields = buildColumns({ displays, rolls, totalDice: count, dieSides, cols: 3, final: true });
   embed.addFields(fields);
 
   if (count > 1) {
     embed.addFields({
       name: 'Total',
-      value: '```fix\n' + `   ${total}\n` + '```',
+      value: '```fix\n' + `${total}\n` + '```',
       inline: false
     });
     embed.setThumbnail(buildNumberThumbUrl(total));
   } else {
-    const raw = parseInt(parts[0]?.replace(/[^\d]/g, ''), 10);
-    if (!Number.isNaN(raw)) embed.setThumbnail(buildNumberThumbUrl(raw));
+    const raw = rolls[0];
+    if (typeof raw === 'number') embed.setThumbnail(buildNumberThumbUrl(raw));
   }
 
   return embed;
@@ -136,26 +143,26 @@ module.exports = {
     const count = interaction.options.getInteger('count') || 1;
     const requestedBy = interaction.user.displayName || interaction.user.username;
 
-    const results = [];
-    const parts = [];
+    const rolls = [];
+    const displays = [];
 
-    await interaction.reply({ embeds: [buildRollingEmbed({ dieSides, count, parts, requestedBy })] });
+    await interaction.reply({ embeds: [buildRollingEmbed({ dieSides, count, displays, rolls, requestedBy })] });
     const msg = await interaction.fetchReply();
 
     for (let i = 0; i < count; i++) {
       const roll = Math.floor(Math.random() * dieSides) + 1;
-      results.push(roll);
-      parts.push(formatRoll(dieSides, roll));
+      rolls.push(roll);
+      displays.push(formatRoll(dieSides, roll));
 
-      await msg.edit({ embeds: [buildRollingEmbed({ dieSides, count, parts, requestedBy })] });
+      await msg.edit({ embeds: [buildRollingEmbed({ dieSides, count, displays, rolls, requestedBy })] });
 
       if (i < count - 1) {
         await sleep(500);
       }
     }
 
-    const total = results.reduce((a, b) => a + b, 0);
-    const finalEmbed = buildFinalEmbed({ dieSides, count, parts, total, requestedBy });
+    const total = rolls.reduce((a, b) => a + b, 0);
+    const finalEmbed = buildFinalEmbed({ dieSides, count, displays, rolls, total, requestedBy });
 
     await msg.edit({ embeds: [finalEmbed] });
   },
