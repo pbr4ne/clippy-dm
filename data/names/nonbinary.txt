@@ -1,8 +1,6 @@
-Aleksei
 Alexi
 Alexis
 Ammrozy
-Andrzej
 Ari
 Artem
 Beba
@@ -12,9 +10,7 @@ Damyan
 Dobromil
 Duscha
 Elya
-Estonia
 Ivica
-Janika
 Kaja
 Kass
 Luda
@@ -27,7 +23,6 @@ Mirche
 Misa
 Misha
 Mokosh
-Moran
 Motya
 Muncel
 Nikita
@@ -37,7 +32,6 @@ Ondrea
 Royko
 Sasa
 Sasha
-Stana
 Troian
 Valya
 Vanya
@@ -46,4 +40,3 @@ Verdell
 Walenty
 Yarka
 Zaklin
-Zhenya
