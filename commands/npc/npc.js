@@ -149,6 +149,8 @@ module.exports = {
           trait
         });
 
+        console.log(prompt);
+
         const resp = await openai.images.generate({
           model: IMAGE_MODEL,
           prompt,
@@ -156,6 +158,8 @@ module.exports = {
           size: '1024x1024',
           n: 1
         });
+
+        console.log(resp.usage);
 
         const firstImg = resp?.data?.[0];
         const imageUrl = firstImg?.url;
