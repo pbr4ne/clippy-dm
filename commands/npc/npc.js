@@ -1,6 +1,16 @@
-const { SlashCommandBuilder, EmbedBuilder, AttachmentBuilder } = require('discord.js');
+const {
+  SlashCommandBuilder,
+  EmbedBuilder,
+  ButtonBuilder,
+  ButtonStyle,
+  ActionRowBuilder,
+  AttachmentBuilder,
+  ComponentType
+} = require('discord.js');
+
 const path = require('path');
 const OpenAI = require('openai');
+
 const config = require(path.join(process.cwd(), 'config.json'));
 
 const {
@@ -9,11 +19,7 @@ const {
   pickWeightedGender
 } = require(path.join(process.cwd(), 'lib', 'nameUtil.js'));
 
-const {
-  generateHair,
-  formatHair
-} = require(path.join(process.cwd(), 'lib', 'hairUtil.js'));
-
+const { generateHair, formatHair } = require(path.join(process.cwd(), 'lib', 'hairUtil.js'));
 const { generateEyes } = require(path.join(process.cwd(), 'lib', 'eyeUtil.js'));
 const { pickTrait, pickBeardTrait } = require(path.join(process.cwd(), 'lib', 'traitUtil.js'));
 const { buildNpcImagePrompt } = require(path.join(process.cwd(), 'lib', 'npcImagePrompt.js'));
@@ -42,15 +48,8 @@ function pickWeightedAge() {
 module.exports = {
   data: new SlashCommandBuilder()
     .setName('npc')
-    .setDescription('Generate a random NPC.')
-    .addBooleanOption(o =>
-      o.setName('image')
-        .setDescription('Generate an image for NPC.')
-        .setRequired(true)
-    ),
+    .setDescription('Generate a random NPC.'),
   async execute(interaction) {
-    const wantImage = interaction.options.getBoolean('image') === true;
-
     const gender = pickWeightedGender();
     const first = pickFirstName(gender);
     const last = pickSurname();
@@ -91,68 +90,101 @@ module.exports = {
       .setFooter({ text: `Requested by ${interaction.user.username}` })
       .setTimestamp();
 
-    if (!wantImage) {
-      await interaction.reply({ embeds: [embed] });
-      return;
-    }
+    const nonce = interaction.id;
+    const genBtnId = `npc_gen_img_${nonce}`;
 
-    const apiKey = process.env.OPENAI_API_KEY;
-    if (!apiKey) {
-      await interaction.reply({
-        content: '⚠️ Image generation failed.',
-        embeds: [embed]
-      });
-      return;
-    }
+    const genRow = new ActionRowBuilder().addComponents(
+      new ButtonBuilder()
+        .setCustomId(genBtnId)
+        .setLabel('Generate Image')
+        .setStyle(ButtonStyle.Primary)
+    );
 
-    const openai = new OpenAI({ apiKey });
+    const message = await interaction.reply({
+      embeds: [embed],
+      components: [genRow]
+    });
 
-    const IMAGE_MODEL = 'gpt-image-1';
+    const filter = (i) => i.user.id === interaction.user.id && i.customId === genBtnId;
 
-    try {
-      await interaction.deferReply();
+    const collector = message.createMessageComponentCollector({
+      componentType: ComponentType.Button,
+      filter,
+      time: 5 * 60 * 1000
+    });
 
-      const prompt = buildNpcImagePrompt({
-        gender,
-        age,
-        hairText,
-        beard,
-        eyesText: eyes.text,
-        trait
-      });
+    collector.on('collect', async (i) => {
+      const disabledRow = new ActionRowBuilder().addComponents(
+        new ButtonBuilder()
+          .setCustomId(genBtnId)
+          .setLabel('Generating…')
+          .setStyle(ButtonStyle.Primary)
+          .setDisabled(true)
+      );
+      await i.update({ components: [disabledRow] });
 
-      const resp = await openai.images.generate({
-        model: IMAGE_MODEL,
-        prompt,
-        quality: 'low',
-        size: '1024x1024',
-        n: 1
-      });
-
-      const first = resp?.data?.[0];
-      const imageUrl = first?.url;
-      const b64 = first?.b64_json;
-
-      if (imageUrl) {
-        embed.setImage(imageUrl);
-        await interaction.editReply({ embeds: [embed] });
-      } else if (b64) {
-        const { AttachmentBuilder } = require('discord.js');
-        const png = Buffer.from(b64, 'base64');
-        const file = new AttachmentBuilder(png, { name: 'npc.png' });
-        embed.setImage('attachment://npc.png');
-        await interaction.editReply({ embeds: [embed], files: [file] });
-      } else {
-        console.error('OpenAI image: unexpected response shape:', JSON.stringify(resp, null, 2));
-        throw new Error('No image data returned from Images API');
+      const apiKey = process.env.OPENAI_API_KEY;
+      if (!apiKey) {
+        const reenableGen = new ActionRowBuilder().addComponents(
+          new ButtonBuilder()
+            .setCustomId(genBtnId)
+            .setLabel('Generate Image')
+            .setStyle(ButtonStyle.Primary)
+            .setDisabled(false)
+        );
+        await i.followUp({ content: '⚠️ Image generation failed.' });
+        return message.edit({ components: [reenableGen] });
       }
-    } catch (err) {
-      console.error('OpenAI image error:', err);
-      const reply = interaction.deferred ? interaction.editReply.bind(interaction) : interaction.reply.bind(interaction);
-      await reply({
-        content: '⚠️ Image generation failed.',
-        embeds: [embed]
-      });
-    }
-  },
+
+      const openai = new OpenAI({ apiKey });
+      const IMAGE_MODEL = 'gpt-image-1';
+
+      try {
+        const prompt = buildNpcImagePrompt({
+          gender,
+          age,
+          hairText,
+          beard,
+          eyesText: eyes.text,
+          trait
+        });
+
+        const resp = await openai.images.generate({
+          model: IMAGE_MODEL,
+          prompt,
+          quality: 'low',
+          size: '1024x1024',
+          n: 1
+        });
+
+        const firstImg = resp?.data?.[0];
+        const imageUrl = firstImg?.url;
+        const b64 = firstImg?.b64_json;
+
+        if (imageUrl) {
+          embed.setImage(imageUrl);
+          await message.edit({ embeds: [embed], components: [] });
+        } else if (b64) {
+          const png = Buffer.from(b64, 'base64');
+          const file = new AttachmentBuilder(png, { name: 'npc.png' });
+          embed.setImage('attachment://npc.png');
+          await message.edit({ embeds: [embed], files: [file], components: [] });
+        } else {
+          console.error('OpenAI image: unexpected response shape:', JSON.stringify(resp, null, 2));
+          await i.followUp({ content: '⚠️ Image generation failed.' });
+          await message.edit({ components: [genRow] });
+        }
+      } catch (err) {
+        console.error('OpenAI image error:', err);
+        await i.followUp({ content: '⚠️ Image generation failed.' });
+        await message.edit({ components: [genRow] });
+      }
+    });
+
+    collector.on('end', async () => {
+      try {
+        await message.edit({ components: [] });
+      } catch (_) {}
+    });
+  }
 };
