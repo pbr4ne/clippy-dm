@@ -8,6 +8,7 @@ const {
 } = require(path.join(process.cwd(), 'lib', 'nameUtil.js'));
 const { generateHair, formatHair } = require(path.join(process.cwd(), 'lib', 'hairUtil.js'));
 const { generateEyes } = require(path.join(process.cwd(), 'lib', 'eyeUtil.js'));
+const { pickTrait, pickBeardTrait } = require(path.join(process.cwd(), 'lib', 'traitUtil.js'));
 
 function randInt(min, max) {
   return Math.floor(Math.random() * (max - min + 1)) + min;
@@ -44,6 +45,16 @@ module.exports = {
     const hairText = formatHair(hair);
 
     const eyes = generateEyes();
+    const trait = pickTrait();
+    const beard = gender === 'man' ? pickBeardTrait() : null;
+
+    const hairFieldValue = gender === 'man'
+      ? beard
+        ? `• ${hairText}\n• ${beard}`
+        : `• ${hairText}`
+      : beard
+        ? `${hairText}\n${beard}`
+        : hairText;
 
     const genderEmoji =
       gender === 'man' ? '♂️' :
@@ -61,17 +72,12 @@ module.exports = {
       .addFields(
         { name: 'Name', value: `${first} ${last}`, inline: true },
         { name: 'Gender', value: `${genderEmoji} ${gender}`, inline: true },
-        {
-          name: "\t",
-          value: "\t"
-        },
+        { name: '\t', value: '\t' },
         { name: 'Age', value: `${age}`, inline: true },
         { name: 'Eyes', value: eyes.text, inline: true },
-        {
-          name: "\t",
-          value: "\t"
-        },
-        { name: 'Hair', value: hairText, inline: false }
+        { name: '\t', value: '\t' },
+        { name: 'Hair', value: hairFieldValue, inline: false },
+        { name: 'Trait', value: trait, inline: false }
       )
       .setFooter({ text: `Requested by ${interaction.user.username}` })
       .setTimestamp();

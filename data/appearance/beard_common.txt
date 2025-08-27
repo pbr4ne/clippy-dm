@@ -1,0 +1,6 @@
+clean-shaven face
+light stubble
+heavy stubble
+short cropped beard
+neatly trimmed beard
+simple moustache
