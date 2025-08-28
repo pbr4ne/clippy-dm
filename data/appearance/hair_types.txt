@@ -2,6 +2,7 @@ straight
 wavy
 curly
 loosely curled
+tumbling curls
 tightly curled
 thick
 fine
@@ -10,6 +11,10 @@ flat
 frizzy
 silky
 textured
+wiry
+coarse
+wispy
+full
 tousled
 unkempt
 braided

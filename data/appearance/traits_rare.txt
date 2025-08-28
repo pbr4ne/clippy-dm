@@ -1,11 +1,14 @@
 jagged scar across face
 burn scars on hands
-missing finger
+amputated finger
 missing ear tip
 glass eye
 heterochromia
 full-sleeve tattoos
 brand mark on neck
+scars from a vampire attack
+flamboyant garb
+elegant clothing
 elaborate facial piercings
 mechanical prosthetic hand
 ornate prosthetic leg
@@ -13,3 +16,5 @@ ceremonial paint on face
 fresh claw marks
 ornate eye patch
 gold tooth
+distinctly elven ancestry
+distinctly dwarven ancestry
