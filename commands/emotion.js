@@ -24,7 +24,7 @@ function loadJsonList(filePath) {
 function pickWeighted() {
   const roll = Math.random();
   if (roll < 0.7) return 'common';
-  if (roll < 0.95) return 'uncommon';
+  if (roll < 0.99) return 'uncommon';
   return 'rare';
 }
 
