@@ -22,7 +22,16 @@ module.exports = {
 	async execute(interaction) {
 		try {
 			const config = loadWeatherList();
-			const pool = Math.random() < 0.75 ? config.common : config.uncommon;
+			const roll = Math.random();
+      let pool;
+
+      if (roll < 0.90) {
+        pool = config.common;
+      } else if (roll < 0.99) {
+        pool = config.uncommon;
+      } else {
+        pool = config.rare;
+      }
 			const condition = pickRandom(pool);
 
 			const temp = randInt(condition.temperature.min, condition.temperature.max);

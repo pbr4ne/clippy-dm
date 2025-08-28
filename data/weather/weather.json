@@ -1,83 +1,169 @@
 {
-	"common": [
-		{
-			"emoji": "☀️",
-			"name": "Clear",
-			"temperature": { "min": 15, "max": 19 },
-			"wind": { "min": 0, "max": 15 },
-			"humidity": { "min": 20, "max": 50 }
-		},
-		{
-			"emoji": "⛅",
-			"name": "Partly Cloudy",
-			"temperature": { "min": 10, "max": 19 },
-			"wind": { "min": 5, "max": 20 },
-			"humidity": { "min": 30, "max": 70 }
-		},
-		{
-			"emoji": "☁️",
-			"name": "Cloudy",
-			"temperature": { "min": 5, "max": 19 },
-			"wind": { "min": 5, "max": 20 },
-			"humidity": { "min": 40, "max": 80 }
-		},
-		{
-			"emoji": "🌧️",
-			"name": "Rain",
-			"temperature": { "min": 5, "max": 19 },
-			"wind": { "min": 5, "max": 25 },
-			"humidity": { "min": 70, "max": 95 }
-		},
-		{
-			"emoji": "🌦️",
-			"name": "Showers",
-			"temperature": { "min": 8, "max": 19 },
-			"wind": { "min": 5, "max": 20 },
-			"humidity": { "min": 60, "max": 90 }
-		},
-		{
-			"emoji": "🌫️",
-			"name": "Fog",
-			"temperature": { "min": 0, "max": 15 },
-			"wind": { "min": 0, "max": 10 },
-			"humidity": { "min": 80, "max": 100 }
-		},
-		{
-			"emoji": "🌬️",
-			"name": "Windy",
-			"temperature": { "min": 5, "max": 19 },
-			"wind": { "min": 20, "max": 50 },
-			"humidity": { "min": 30, "max": 70 }
-		}
-	],
-	"uncommon": [
-		{
-			"emoji": "🌨️",
-			"name": "Light Snow",
-			"temperature": { "min": -5, "max": 3 },
-			"wind": { "min": 0, "max": 15 },
-			"humidity": { "min": 60, "max": 90 }
-		},
-		{
-			"emoji": "❄️",
-			"name": "Snow",
-			"temperature": { "min": -15, "max": 0 },
-			"wind": { "min": 0, "max": 20 },
-			"humidity": { "min": 70, "max": 95 }
-		},
-		{
-			"emoji": "⛈️",
-			"name": "Thunderstorm",
-			"temperature": { "min": 15, "max": 20 },
-			"wind": { "min": 10, "max": 40 },
-			"humidity": { "min": 70, "max": 100 }
-		},
-		{
-			"emoji": "🔥",
-			"name": "Heatwave",
-			"temperature": { "min": 30, "max": 40 },
-			"wind": { "min": 0, "max": 15 },
-			"humidity": { "min": 10, "max": 30 }
-		}
-	]
+  "common": [
+    {
+      "emoji": "🌤️",
+      "name": "Pale Sunlight",
+      "temperature": { "min": 13, "max": 18 },
+      "wind": { "min": 0, "max": 10 },
+      "humidity": { "min": 30, "max": 55 }
+    },
+    {
+      "emoji": "🌥️",
+      "name": "Veiled Skies",
+      "temperature": { "min": 10, "max": 17 },
+      "wind": { "min": 5, "max": 15 },
+      "humidity": { "min": 40, "max": 70 }
+    },
+    {
+      "emoji": "☁️",
+      "name": "Brooding Overcast",
+      "temperature": { "min": 7, "max": 16 },
+      "wind": { "min": 5, "max": 20 },
+      "humidity": { "min": 50, "max": 80 }
+    },
+    {
+      "emoji": "🌧️",
+      "name": "Dreary Rain",
+      "temperature": { "min": 5, "max": 14 },
+      "wind": { "min": 5, "max": 25 },
+      "humidity": { "min": 70, "max": 95 }
+    },
+    {
+      "emoji": "🌦️",
+      "name": "Cold Drizzle",
+      "temperature": { "min": 6, "max": 12 },
+      "wind": { "min": 5, "max": 15 },
+      "humidity": { "min": 75, "max": 95 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Creeping Fog",
+      "temperature": { "min": 1, "max": 12 },
+      "wind": { "min": 0, "max": 8 },
+      "humidity": { "min": 85, "max": 100 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Thick Mists",
+      "temperature": { "min": 0, "max": 10 },
+      "wind": { "min": 0, "max": 5 },
+      "humidity": { "min": 90, "max": 100 }
+    },
+    {
+      "emoji": "💨",
+      "name": "Chill Winds",
+      "temperature": { "min": 5, "max": 14 },
+      "wind": { "min": 15, "max": 40 },
+      "humidity": { "min": 40, "max": 75 }
+    },
+    {
+      "emoji": "🌧️",
+      "name": "Persistent Drizzle",
+      "temperature": { "min": 4, "max": 10 },
+      "wind": { "min": 3, "max": 12 },
+      "humidity": { "min": 80, "max": 100 }
+    },
+    {
+      "emoji": "☁️",
+      "name": "Dull Grey Skies",
+      "temperature": { "min": 6, "max": 15 },
+      "wind": { "min": 5, "max": 15 },
+      "humidity": { "min": 50, "max": 75 }
+    }
+  ],
+  "uncommon": [
+    {
+      "emoji": "🌨️",
+      "name": "Silent Snowfall",
+      "temperature": { "min": -5, "max": 2 },
+      "wind": { "min": 0, "max": 10 },
+      "humidity": { "min": 65, "max": 90 }
+    },
+    {
+      "emoji": "❄️",
+      "name": "Biting Frost",
+      "temperature": { "min": -15, "max": -1 },
+      "wind": { "min": 5, "max": 20 },
+      "humidity": { "min": 60, "max": 90 }
+    },
+    {
+      "emoji": "🌩️",
+      "name": "Grim Thunder",
+      "temperature": { "min": 12, "max": 18 },
+      "wind": { "min": 10, "max": 35 },
+      "humidity": { "min": 75, "max": 100 }
+    },
+    {
+      "emoji": "🌧️",
+      "name": "Freezing Rain",
+      "temperature": { "min": -3, "max": 3 },
+      "wind": { "min": 5, "max": 20 },
+      "humidity": { "min": 80, "max": 100 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Haunting Mist",
+      "temperature": { "min": 0, "max": 8 },
+      "wind": { "min": 0, "max": 5 },
+      "humidity": { "min": 95, "max": 100 }
+    },
+    {
+      "emoji": "🌪️",
+      "name": "Twisting Gale",
+      "temperature": { "min": 5, "max": 15 },
+      "wind": { "min": 30, "max": 65 },
+      "humidity": { "min": 50, "max": 80 }
+    },
+    {
+      "emoji": "🌨️",
+      "name": "Heavy Snow",
+      "temperature": { "min": -8, "max": 1 },
+      "wind": { "min": 5, "max": 20 },
+      "humidity": { "min": 70, "max": 95 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Lingering Haze",
+      "temperature": { "min": 2, "max": 12 },
+      "wind": { "min": 0, "max": 10 },
+      "humidity": { "min": 85, "max": 100 }
+    }
+  ],
+  "rare": [
+    {
+      "emoji": "🌕",
+      "name": "Blood Moon",
+      "temperature": { "min": 2, "max": 10 },
+      "wind": { "min": 0, "max": 15 },
+      "humidity": { "min": 60, "max": 85 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Cursed Fog",
+      "temperature": { "min": 0, "max": 7 },
+      "wind": { "min": 0, "max": 5 },
+      "humidity": { "min": 95, "max": 100 }
+    },
+    {
+      "emoji": "🌪️",
+      "name": "Wailing Storm",
+      "temperature": { "min": 5, "max": 15 },
+      "wind": { "min": 40, "max": 80 },
+      "humidity": { "min": 70, "max": 100 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Ashfall",
+      "temperature": { "min": 4, "max": 12 },
+      "wind": { "min": 5, "max": 20 },
+      "humidity": { "min": 50, "max": 70 }
+    },
+    {
+      "emoji": "🌫️",
+      "name": "Shroud of Dread",
+      "temperature": { "min": 1, "max": 8 },
+      "wind": { "min": 0, "max": 5 },
+      "humidity": { "min": 95, "max": 100 }
+    }
+  ]
 }
