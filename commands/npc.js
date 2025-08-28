@@ -34,7 +34,7 @@ module.exports = {
       components: [genRow]
     });
 
-    const filter = (i) => i.user.id === interaction.user.id && i.customId === genBtnId;
+    const filter = (i) => i.customId === genBtnId;
     const collector = message.createMessageComponentCollector({
       componentType: ComponentType.Button,
       filter,
