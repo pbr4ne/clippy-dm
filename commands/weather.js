@@ -21,12 +21,14 @@ module.exports = {
 		.setDescription('Generate weather.'),
 	async execute(interaction) {
 		try {
-			const conditions = loadWeatherList();
-			const condition = pickRandom(conditions);
-			const temp = randInt(-25, 38);
-			const windSpeed = randInt(0, 35);
+			const config = loadWeatherList();
+			const pool = Math.random() < 0.75 ? config.common : config.uncommon;
+			const condition = pickRandom(pool);
+
+			const temp = randInt(condition.temperature.min, condition.temperature.max);
+			const windSpeed = randInt(condition.wind.min, condition.wind.max);
 			const windDir = pickRandom(windDirections);
-			const humidity = randInt(40, 95);
+			const humidity = randInt(condition.humidity.min, condition.humidity.max);
 
 			const weather = { condition, temp, windSpeed, windDir, humidity };
 			const embed = buildWeatherEmbed(weather, interaction.user.username);
@@ -92,7 +94,8 @@ module.exports = {
 			collector.on('end', async () => {
 				try { await message.edit({ components: [] }); } catch (_) {}
 			});
-		} catch (_) {
+		} catch (err) {
+			console.log('Weather generation failed', err);
 			const { EmbedBuilder } = require('discord.js');
 			const embed = new EmbedBuilder()
 				.setTitle('Generated Weather')
