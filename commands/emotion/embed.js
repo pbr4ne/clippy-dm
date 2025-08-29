@@ -1,7 +1,7 @@
 const { EmbedBuilder } = require('discord.js');
 
 const path = require('path');
-const { emojiToUrl } = require(path.join(process.cwd(), 'lib', 'util', 'emojiService.js'));
+const { emojiToUrl } = require(path.join(process.cwd(), 'commands', 'util', 'emojiService.js'));
 
 function buildEmotionEmbed({ label, emoji, rarity }, requestedBy) {
   const emojiUrl = emojiToUrl(emoji);

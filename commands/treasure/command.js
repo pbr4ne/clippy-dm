@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const path = require('node:path');
-const { buildTreasureEmbed } = require(path.join(process.cwd(), 'lib', 'treasure', 'treasureEmbed.js'));
+const { buildTreasureEmbed } = require(path.join(process.cwd(), 'commands', 'treasure', 'embed.js'));
 
 const treasureTypes = [
   { name: 'Coins', emoji: '🪙', min: 50, max: 500 },

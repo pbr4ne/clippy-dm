@@ -1,12 +1,12 @@
 const { SlashCommandBuilder } = require('discord.js');
 const fs = require('node:fs');
 const path = require('node:path');
-const { buildEmotionEmbed } = require(path.join(process.cwd(), 'lib', 'emotion', 'emotionEmbed.js'));
+const { buildEmotionEmbed } = require(path.join(process.cwd(), 'commands', 'emotion', 'embed.js'));
 
 const files = {
-  common: path.join(process.cwd(), 'data', 'emotions', 'emotions_common.json'),
-  uncommon: path.join(process.cwd(), 'data', 'emotions', 'emotions_uncommon.json'),
-  rare: path.join(process.cwd(), 'data', 'emotions', 'emotions_rare.json')
+  common: path.join(process.cwd(), 'commands', 'emotion', 'data', 'emotions_common.json'),
+  uncommon: path.join(process.cwd(), 'commands', 'emotion', 'data', 'emotions_uncommon.json'),
+  rare: path.join(process.cwd(), 'commands', 'emotion', 'data', 'emotions_rare.json')
 };
 
 function loadJsonList(filePath) {

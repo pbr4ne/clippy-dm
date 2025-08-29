@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const CONFIG_PATH = path.join(process.cwd(), 'data', 'weather', 'weather.json');
+const CONFIG_PATH = path.join(process.cwd(), 'commands', 'weather', 'data', 'weather.json');
 
 function loadWeatherList() {
 	try {

@@ -7,9 +7,9 @@ const {
 } = require('discord.js');
 
 const path = require('path');
-const { generateNpc } = require(path.join(process.cwd(), 'lib', 'npc', 'npcGenerator.js'));
-const { buildNpcEmbed } = require(path.join(process.cwd(), 'lib', 'npc', 'npcEmbed.js'));
-const { generateNpcImage } = require(path.join(process.cwd(), 'lib', 'util', 'imageService.js'));
+const { generateNpc } = require(path.join(process.cwd(), 'commands', 'npc', 'npcGenerator.js'));
+const { buildNpcEmbed } = require(path.join(process.cwd(), 'commands', 'npc', 'embed.js'));
+const { generateNpcImage } = require(path.join(process.cwd(), 'commands', 'util', 'imageService.js'));
 
 module.exports = {
   data: new SlashCommandBuilder()

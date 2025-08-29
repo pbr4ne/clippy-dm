@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(process.cwd(), 'data', 'names', "slavic");
+const DATA_DIR = path.join(process.cwd(), 'commands', 'name', 'data', "slavic");
 
 const loadList = (filename) => {
   const filePath = path.join(DATA_DIR, filename);

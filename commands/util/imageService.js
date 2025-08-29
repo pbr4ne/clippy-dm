@@ -1,8 +1,8 @@
 const OpenAI = require('openai');
 const { AttachmentBuilder } = require('discord.js');
 const path = require('path');
-const { buildNpcImagePrompt } = require(path.join(process.cwd(), 'lib', 'npc', 'npcImagePrompt.js'));
-const { buildWeatherImagePrompt } = require(path.join(process.cwd(), 'lib', 'weather', 'weatherImagePrompt.js'));
+const { buildNpcImagePrompt } = require(path.join(process.cwd(), 'commands', 'npc', 'npcImagePrompt.js'));
+const { buildWeatherImagePrompt } = require(path.join(process.cwd(), 'commands', 'weather', 'weatherImagePrompt.js'));
 
 const IMAGE_MODEL = 'gpt-image-1';
 

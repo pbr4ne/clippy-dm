@@ -1,7 +1,7 @@
 const fs = require('fs');
 const path = require('path');
 
-const DATA_DIR = path.join(process.cwd(), 'data', 'appearance');
+const DATA_DIR = path.join(process.cwd(), 'commands', 'npc', 'data');
 
 function loadList(filename) {
   const filePath = path.join(DATA_DIR, filename);

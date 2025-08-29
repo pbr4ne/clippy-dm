@@ -7,9 +7,9 @@ const {
 	ComponentType
 } = require('discord.js');
 
-const { loadWeatherList } = require(path.join(process.cwd(), 'lib', 'weather', 'weatherConfig.js'));
-const { generateWeatherImage } = require(path.join(process.cwd(), 'lib', 'util', 'imageService.js'));
-const { buildWeatherEmbed } = require(path.join(process.cwd(), 'lib', 'weather', 'weatherEmbed.js'));
+const { loadWeatherList } = require(path.join(process.cwd(), 'commands', 'weather', 'weatherConfig.js'));
+const { generateWeatherImage } = require(path.join(process.cwd(), 'commands', 'util', 'imageService.js'));
+const { buildWeatherEmbed } = require(path.join(process.cwd(), 'commands', 'weather', 'embed.js'));
 
 const windDirections = ['⬆️', '↗️', '➡️', '↘️', '⬇️', '↙️', '⬅️', '↖️'];
 const pickRandom = arr => arr[Math.floor(Math.random() * arr.length)];

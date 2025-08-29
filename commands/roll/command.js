@@ -1,6 +1,6 @@
 const { SlashCommandBuilder } = require('discord.js');
 const path = require('path');
-const { buildRollingEmbed, buildFinalEmbed } = require(path.join(process.cwd(), 'lib', 'roll', 'rollEmbed.js'));
+const { buildRollingEmbed, buildFinalEmbed } = require(path.join(process.cwd(), 'commands', 'roll', 'embed.js'));
 
 const sleep = (ms) => new Promise(res => setTimeout(res, ms));
 
