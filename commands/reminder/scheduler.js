@@ -2,7 +2,7 @@ const { Op } = require('sequelize')
 const { sendReminder } = require('./sender')
 const Reminder = require('./reminderModel')
 
-const MAX_TIMEOUT = 2 ** 31 - 1
+const MAX_TIMEOUT = 2 ** 31 - 1;
 
 exports.loadAndScheduleReminders = async (client) => {
 	const now = new Date();
@@ -33,7 +33,7 @@ function scheduleReminder(id, client) {
 			setTimeout(async () => { await sendIfNotDone(id, client) }, delay);
 		}
 	}
-	tick()
+	tick();
 }
 
 async function sendIfNotDone(id, client) {
@@ -41,7 +41,7 @@ async function sendIfNotDone(id, client) {
 	if (!r || r.completed || r.canceled) {
 		return;
 	}
-	await sendReminder(r, client)
+	await sendReminder(r, client);
 }
 
 exports.scheduleReminder = scheduleReminder;

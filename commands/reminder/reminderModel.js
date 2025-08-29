@@ -23,6 +23,14 @@ const Reminder = sequelize.define('Reminder', {
     type: DataTypes.BOOLEAN,
     defaultValue: false,
   },
+  targetUserId: { 
+    type: DataTypes.STRING, 
+    allowNull: true 
+  },
+  mentionEveryone: { 
+    type: DataTypes.BOOLEAN, 
+    defaultValue: false 
+  },
   remindAt: {
     type: DataTypes.DATE,
     allowNull: false,
