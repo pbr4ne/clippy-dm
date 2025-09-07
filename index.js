@@ -4,6 +4,7 @@ const { Client, Collection, Events, GatewayIntentBits } = require('discord.js');
 const { token } = require('./config.json');
 require('dotenv').config();
 const { loadCommandsFrom } = require('./commands/util/commandLoader');
+const { loadAndScheduleReminders } = require('./commands/reminder/scheduler');
 
 const client = new Client({ intents: [GatewayIntentBits.Guilds] });
 
@@ -12,8 +13,13 @@ const loaded = loadCommandsFrom(commandsDir);
 client.commands = new Collection();
 for (const [name, cmd] of loaded) client.commands.set(name, cmd);
 
-client.once(Events.ClientReady, readyClient => {
+client.once(Events.ClientReady, async readyClient => {
   console.log(`${readyClient.user.tag} started`);
+  try {
+    await loadAndScheduleReminders(client);
+  } catch (err) {
+    console.error('Failed to load/schedule reminders:', err);
+  }
 });
 
 client.on(Events.InteractionCreate, async interaction => {
